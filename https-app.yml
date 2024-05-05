@@ -1,0 +1,94 @@
+apiVersion: v1
+items:
+- apiVersion: image.openshift.io/v1
+  kind: ImageStream
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: todo-https
+      app.kubernetes.io/component: todo-https
+      app.kubernetes.io/instance: todo-https
+    name: todo-https
+  spec:
+    lookupPolicy:
+      local: false
+    tags:
+    - annotations:
+        openshift.io/imported-from: docker.io/aryansr/todo-https:latest
+      from:
+        kind: DockerImage
+        name: docker.io/aryansr/todo-https:latest
+      generation: null
+      importPolicy: {}
+      name: latest
+      referencePolicy:
+        type: ""
+  status:
+    dockerImageRepository: ""
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      image.openshift.io/triggers: '[{"from":{"kind":"ImageStreamTag","name":"todo-https:latest"},"fieldPath":"spec.template.spec.containers[?(@.name==\"todo-https\")].image"}]'
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: todo-https
+      app.kubernetes.io/component: todo-https
+      app.kubernetes.io/instance: todo-https
+    name: todo-https
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        deployment: todo-https
+    strategy: {}
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: OpenShiftNewApp
+        creationTimestamp: null
+        labels:
+          deployment: todo-https
+      spec:
+        containers:
+        - image: ' '
+          name: todo-https
+          volumeMounts:
+            - mountPath: /usr/local/etc/ssl/certs
+              name: nginx-ssl
+              readOnly: true
+          ports:
+          - containerPort: 8443
+            protocol: TCP
+          resources: {}
+        volumes:
+          - name: nginx-ssl
+            secret:
+              secretName: nginx-ssl
+  status: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: todo-https
+      app.kubernetes.io/component: todo-https
+      app.kubernetes.io/instance: todo-https
+    name: todo-https
+  spec:
+    ports:
+    - name: 8443-tcp
+      port: 8443
+      protocol: TCP
+      targetPort: 8443
+    selector:
+      deployment: todo-https
+  status:
+    loadBalancer: {}
+kind: List
+metadata: {}
