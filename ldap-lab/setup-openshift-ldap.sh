@@ -1,6 +1,4 @@
-from pathlib import Path
-
-script = r'''#!/usr/bin/env bash
+#!/usr/bin/env bash
 set -euo pipefail
 
 # ==============================================================================
@@ -572,12 +570,3 @@ echo "  oc get all -n ${NAMESPACE}"
 echo "  oc logs -n ${NAMESPACE} deployment/${APP_NAME}"
 echo
 echo "=============================================================================="
-'''
-
-path = Path("/mnt/data/setup-openshift-ldap.sh")
-path.write_text(script)
-path.chmod(0o755)
-
-print(f"Created: {path}")
-print(f"Lines: {len(script.splitlines())}")
-print("Executable mode set.")
